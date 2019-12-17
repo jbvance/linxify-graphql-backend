@@ -54,6 +54,10 @@ const Mutations = {
   //   return ctx.db.mutation.deleteItem({ where }, info);
   // },
 
+  async createCategory(parent, args, ctx, info) {
+    if (!ctx.request.userId) throw new Error('You must be logged in!');
+  },
+
   async signup(parent, args, ctx, info) {
     args.email = args.email.toLowerCase();
     // hash the password
