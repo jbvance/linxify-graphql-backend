@@ -1,0 +1,39 @@
+enum Permission {
+  ADMIN
+  USER
+  ITEMCREATE
+  ITEMUPDATE
+  ITEMDELETE
+  PERMISSIONUPDATE
+}
+
+type User {
+  id: ID! @id
+  name: String!
+  email: String! @unique
+  password: String!
+  resetToken: String
+  resetTokenExpiry: Float  
+  links: [Link] @relation(name: "UserLinks")
+  permissions: [Permission] @scalarList(strategy: RELATION)
+}
+
+type Category {
+  id: ID! @id
+  name: String! 
+  createdAt: DateTime @createdAt
+  updatedAt: DateTime @updatedAt
+}
+
+type Link {
+  id: ID! @id
+  url: String!
+  favIcon: String!
+  title: String!
+  note: String
+  user: User! @relation(name: "UserLinks", onDelete: CASCADE)
+  Category: Category
+  createdAt: DateTime @createdAt
+  updatedAt: DateTime @updatedAt
+}
+
