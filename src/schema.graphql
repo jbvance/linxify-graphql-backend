@@ -4,25 +4,19 @@ type SucessMessage {
   message: String
 }
 
-type Mutation {
-  createItem(title: String, description: String, price: Int, image: String, largeImage: String): Item!
-  updateItem(id: ID!, title: String, description: String, price: Int): Item
-  deleteItem(id: ID!): Item
+type Mutation { 
   signup(email: String!, password: String!, name: String!): User!
   signin(email: String!, password: String!): User
   signout: SucessMessage
   requestReset(email: String!): SucessMessage
   resetPassword(resetToken: String!, password: String!, confirmPassword: String!): User!
-  updatePermissions(permissions: [Permission], userId: ID!): User
-  addToCart(id: ID!): CartItem
-  removeFromCart(id: ID!): CartItem
-  createOrder(token: String!): Order!
+  updatePermissions(permissions: [Permission], userId: ID!): User  
 }
 
 type Query {
- items(where: ItemWhereInput, orderBy: ItemOrderByInput, skip: Int, first: Int): [Item]!
- item(where: ItemWhereUniqueInput!): Item
- itemsConnection(where: ItemWhereInput): ItemConnection
+ #items(where: ItemWhereInput, orderBy: ItemOrderByInput, skip: Int, first: Int): [Item]!
+ #item(where: ItemWhereUniqueInput!): Item
+ #itemsConnection(where: ItemWhereInput): ItemConnection
  me: User
  users: [User]!
 }
@@ -32,5 +26,5 @@ type User {
   name: String!
   email: String!
   permissions: [Permission!]!
-  cart: [CartItem!]!
+  links: [Link]
 }
