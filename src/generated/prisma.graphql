@@ -1,5 +1,5 @@
 # source: https://linxify-dev-d62a429fa9.herokuapp.com
-# timestamp: Tue Dec 17 2019 07:10:43 GMT-0600 (Central Standard Time)
+# timestamp: Tue Dec 17 2019 07:54:57 GMT-0600 (Central Standard Time)
 
 type AggregateCategory {
   count: Int!
@@ -21,6 +21,7 @@ type BatchPayload {
 type Category implements Node {
   id: ID!
   name: String!
+  user: User!
   createdAt: DateTime
   updatedAt: DateTime
 }
@@ -38,11 +39,22 @@ type CategoryConnection {
 input CategoryCreateInput {
   id: ID
   name: String!
+  user: UserCreateOneWithoutCategoriesInput!
+}
+
+input CategoryCreateManyWithoutUserInput {
+  create: [CategoryCreateWithoutUserInput!]
+  connect: [CategoryWhereUniqueInput!]
 }
 
 input CategoryCreateOneInput {
   create: CategoryCreateInput
   connect: CategoryWhereUniqueInput
+}
+
+input CategoryCreateWithoutUserInput {
+  id: ID
+  name: String!
 }
 
 """An edge in a connection."""
@@ -70,6 +82,141 @@ type CategoryPreviousValues {
   name: String!
   createdAt: DateTime
   updatedAt: DateTime
+}
+
+input CategoryScalarWhereInput {
+  """Logical AND on all given filters."""
+  AND: [CategoryScalarWhereInput!]
+
+  """Logical OR on all given filters."""
+  OR: [CategoryScalarWhereInput!]
+
+  """Logical NOT on all given filters combined by AND."""
+  NOT: [CategoryScalarWhereInput!]
+  id: ID
+
+  """All values that are not equal to given value."""
+  id_not: ID
+
+  """All values that are contained in given list."""
+  id_in: [ID!]
+
+  """All values that are not contained in given list."""
+  id_not_in: [ID!]
+
+  """All values less than the given value."""
+  id_lt: ID
+
+  """All values less than or equal the given value."""
+  id_lte: ID
+
+  """All values greater than the given value."""
+  id_gt: ID
+
+  """All values greater than or equal the given value."""
+  id_gte: ID
+
+  """All values containing the given string."""
+  id_contains: ID
+
+  """All values not containing the given string."""
+  id_not_contains: ID
+
+  """All values starting with the given string."""
+  id_starts_with: ID
+
+  """All values not starting with the given string."""
+  id_not_starts_with: ID
+
+  """All values ending with the given string."""
+  id_ends_with: ID
+
+  """All values not ending with the given string."""
+  id_not_ends_with: ID
+  name: String
+
+  """All values that are not equal to given value."""
+  name_not: String
+
+  """All values that are contained in given list."""
+  name_in: [String!]
+
+  """All values that are not contained in given list."""
+  name_not_in: [String!]
+
+  """All values less than the given value."""
+  name_lt: String
+
+  """All values less than or equal the given value."""
+  name_lte: String
+
+  """All values greater than the given value."""
+  name_gt: String
+
+  """All values greater than or equal the given value."""
+  name_gte: String
+
+  """All values containing the given string."""
+  name_contains: String
+
+  """All values not containing the given string."""
+  name_not_contains: String
+
+  """All values starting with the given string."""
+  name_starts_with: String
+
+  """All values not starting with the given string."""
+  name_not_starts_with: String
+
+  """All values ending with the given string."""
+  name_ends_with: String
+
+  """All values not ending with the given string."""
+  name_not_ends_with: String
+  createdAt: DateTime
+
+  """All values that are not equal to given value."""
+  createdAt_not: DateTime
+
+  """All values that are contained in given list."""
+  createdAt_in: [DateTime!]
+
+  """All values that are not contained in given list."""
+  createdAt_not_in: [DateTime!]
+
+  """All values less than the given value."""
+  createdAt_lt: DateTime
+
+  """All values less than or equal the given value."""
+  createdAt_lte: DateTime
+
+  """All values greater than the given value."""
+  createdAt_gt: DateTime
+
+  """All values greater than or equal the given value."""
+  createdAt_gte: DateTime
+  updatedAt: DateTime
+
+  """All values that are not equal to given value."""
+  updatedAt_not: DateTime
+
+  """All values that are contained in given list."""
+  updatedAt_in: [DateTime!]
+
+  """All values that are not contained in given list."""
+  updatedAt_not_in: [DateTime!]
+
+  """All values less than the given value."""
+  updatedAt_lt: DateTime
+
+  """All values less than or equal the given value."""
+  updatedAt_lte: DateTime
+
+  """All values greater than the given value."""
+  updatedAt_gt: DateTime
+
+  """All values greater than or equal the given value."""
+  updatedAt_gte: DateTime
 }
 
 type CategorySubscriptionPayload {
@@ -113,14 +260,37 @@ input CategorySubscriptionWhereInput {
 
 input CategoryUpdateDataInput {
   name: String
+  user: UserUpdateOneRequiredWithoutCategoriesInput
 }
 
 input CategoryUpdateInput {
+  name: String
+  user: UserUpdateOneRequiredWithoutCategoriesInput
+}
+
+input CategoryUpdateManyDataInput {
   name: String
 }
 
 input CategoryUpdateManyMutationInput {
   name: String
+}
+
+input CategoryUpdateManyWithoutUserInput {
+  create: [CategoryCreateWithoutUserInput!]
+  connect: [CategoryWhereUniqueInput!]
+  set: [CategoryWhereUniqueInput!]
+  disconnect: [CategoryWhereUniqueInput!]
+  delete: [CategoryWhereUniqueInput!]
+  update: [CategoryUpdateWithWhereUniqueWithoutUserInput!]
+  updateMany: [CategoryUpdateManyWithWhereNestedInput!]
+  deleteMany: [CategoryScalarWhereInput!]
+  upsert: [CategoryUpsertWithWhereUniqueWithoutUserInput!]
+}
+
+input CategoryUpdateManyWithWhereNestedInput {
+  where: CategoryScalarWhereInput!
+  data: CategoryUpdateManyDataInput!
 }
 
 input CategoryUpdateOneInput {
@@ -132,9 +302,24 @@ input CategoryUpdateOneInput {
   upsert: CategoryUpsertNestedInput
 }
 
+input CategoryUpdateWithoutUserDataInput {
+  name: String
+}
+
+input CategoryUpdateWithWhereUniqueWithoutUserInput {
+  where: CategoryWhereUniqueInput!
+  data: CategoryUpdateWithoutUserDataInput!
+}
+
 input CategoryUpsertNestedInput {
   update: CategoryUpdateDataInput!
   create: CategoryCreateInput!
+}
+
+input CategoryUpsertWithWhereUniqueWithoutUserInput {
+  where: CategoryWhereUniqueInput!
+  update: CategoryUpdateWithoutUserDataInput!
+  create: CategoryCreateWithoutUserInput!
 }
 
 input CategoryWhereInput {
@@ -270,6 +455,7 @@ input CategoryWhereInput {
 
   """All values greater than or equal the given value."""
   updatedAt_gte: DateTime
+  user: UserWhereInput
 }
 
 input CategoryWhereUniqueInput {
@@ -1069,6 +1255,7 @@ type User implements Node {
   resetToken: String
   resetTokenExpiry: Float
   links(where: LinkWhereInput, orderBy: LinkOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Link!]
+  categories(where: CategoryWhereInput, orderBy: CategoryOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Category!]
   permissions: [Permission!]!
 }
 
@@ -1091,6 +1278,12 @@ input UserCreateInput {
   resetTokenExpiry: Float
   permissions: UserCreatepermissionsInput
   links: LinkCreateManyWithoutUserInput
+  categories: CategoryCreateManyWithoutUserInput
+}
+
+input UserCreateOneWithoutCategoriesInput {
+  create: UserCreateWithoutCategoriesInput
+  connect: UserWhereUniqueInput
 }
 
 input UserCreateOneWithoutLinksInput {
@@ -1102,6 +1295,17 @@ input UserCreatepermissionsInput {
   set: [Permission!]
 }
 
+input UserCreateWithoutCategoriesInput {
+  id: ID
+  name: String!
+  email: String!
+  password: String!
+  resetToken: String
+  resetTokenExpiry: Float
+  permissions: UserCreatepermissionsInput
+  links: LinkCreateManyWithoutUserInput
+}
+
 input UserCreateWithoutLinksInput {
   id: ID
   name: String!
@@ -1110,6 +1314,7 @@ input UserCreateWithoutLinksInput {
   resetToken: String
   resetTokenExpiry: Float
   permissions: UserCreatepermissionsInput
+  categories: CategoryCreateManyWithoutUserInput
 }
 
 """An edge in a connection."""
@@ -1193,6 +1398,7 @@ input UserUpdateInput {
   resetTokenExpiry: Float
   permissions: UserUpdatepermissionsInput
   links: LinkUpdateManyWithoutUserInput
+  categories: CategoryUpdateManyWithoutUserInput
 }
 
 input UserUpdateManyMutationInput {
@@ -1202,6 +1408,13 @@ input UserUpdateManyMutationInput {
   resetToken: String
   resetTokenExpiry: Float
   permissions: UserUpdatepermissionsInput
+}
+
+input UserUpdateOneRequiredWithoutCategoriesInput {
+  create: UserCreateWithoutCategoriesInput
+  connect: UserWhereUniqueInput
+  update: UserUpdateWithoutCategoriesDataInput
+  upsert: UserUpsertWithoutCategoriesInput
 }
 
 input UserUpdateOneRequiredWithoutLinksInput {
@@ -1215,6 +1428,16 @@ input UserUpdatepermissionsInput {
   set: [Permission!]
 }
 
+input UserUpdateWithoutCategoriesDataInput {
+  name: String
+  email: String
+  password: String
+  resetToken: String
+  resetTokenExpiry: Float
+  permissions: UserUpdatepermissionsInput
+  links: LinkUpdateManyWithoutUserInput
+}
+
 input UserUpdateWithoutLinksDataInput {
   name: String
   email: String
@@ -1222,6 +1445,12 @@ input UserUpdateWithoutLinksDataInput {
   resetToken: String
   resetTokenExpiry: Float
   permissions: UserUpdatepermissionsInput
+  categories: CategoryUpdateManyWithoutUserInput
+}
+
+input UserUpsertWithoutCategoriesInput {
+  update: UserUpdateWithoutCategoriesDataInput!
+  create: UserCreateWithoutCategoriesInput!
 }
 
 input UserUpsertWithoutLinksInput {
@@ -1463,6 +1692,9 @@ input UserWhereInput {
   links_every: LinkWhereInput
   links_some: LinkWhereInput
   links_none: LinkWhereInput
+  categories_every: CategoryWhereInput
+  categories_some: CategoryWhereInput
+  categories_none: CategoryWhereInput
 }
 
 input UserWhereUniqueInput {
