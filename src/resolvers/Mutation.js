@@ -53,10 +53,7 @@ const Mutations = {
   //   }
   //   return ctx.db.mutation.deleteItem({ where }, info);
   // },
-
-  async createCategory(parent, args, ctx, info) {
-    if (!ctx.request.userId) throw new Error('You must be logged in!');
-  },
+ 
 
   async signup(parent, args, ctx, info) {
     args.email = args.email.toLowerCase();
@@ -90,7 +87,7 @@ const Mutations = {
     }
     const valid = await bcrypt.compare(password, user.password);
     if (!valid) throw new Error('Invalid Password');
-    const token = jwt.sign({ userId: user.id }, process.env.APP_SECRET);
+    const token = jwt.sign({ userId: user.id }, process.env.APP_SECRET);    
     ctx.response.cookie('token', token, {
       httpOnly: true,
       maxAge: 1000 * 60 * 60 * 24 * 365
