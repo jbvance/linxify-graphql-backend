@@ -14,15 +14,15 @@ type User {
   password: String!
   resetToken: String
   resetTokenExpiry: Float  
-  links: [Link!] @relation(name: "UserLinks")
-  categories: [Category!] @relation(name: "UserCategories")
+  links: [Link!]! @relation(name: "UserLinks")
+  categories: [Category!]! @relation(name: "UserCategories", onDelete: CASCADE)
   permissions: [Permission] @scalarList(strategy: RELATION)
 }
 
 type Category {
   id: ID! @id
   name: String! 
-  user: User! @relation(name: "UserCategories", onDelete: CASCADE)
+  user: User! @relation(name: "UserCategories")
   createdAt: DateTime @createdAt
   updatedAt: DateTime @updatedAt
 }

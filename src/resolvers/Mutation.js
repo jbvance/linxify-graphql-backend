@@ -87,7 +87,7 @@ const Mutations = {
     }
     const valid = await bcrypt.compare(password, user.password);
     if (!valid) throw new Error('Invalid Password');
-    const token = jwt.sign({ userId: user.id }, process.env.APP_SECRET);    
+    const token = jwt.sign({ userId: user.id }, process.env.APP_SECRET);       
     ctx.response.cookie('token', token, {
       httpOnly: true,
       maxAge: 1000 * 60 * 60 * 24 * 365
@@ -165,6 +165,33 @@ const Mutations = {
       info
     );
   },
+
+  async createCategory(parent, args, ctx, info) {    
+    const { userId } = ctx.request;
+    if(!userId) throw new Error('You  must be signed in to complete this order');
+    return ctx.db.mutation.createCategory({
+      data: {
+        name: args.name,
+        user: {
+          connect: {
+            id: userId
+          }
+        }
+      }
+    })
+  },
+
+  async deleteCategory(parent, args, ctx, info) {
+    const where = { id: args.id };
+    const category = await ctx.db.query.category({ where }, `{ id name user { id } }`);
+    const ownsItem = category.user.id === ctx.request.userId;  
+    if (!ownsItem) {
+      throw new Error("You can only delete items that belong to you");
+    }
+    return ctx.db.mutation.deleteCategory({ where }, info);
+  },
+ 
+
 
   // async createOrder(parent, args, ctx, info) {
   //   const { userId } = ctx.request;

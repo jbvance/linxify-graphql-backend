@@ -11,6 +11,8 @@ type Mutation {
   requestReset(email: String!): SucessMessage
   resetPassword(resetToken: String!, password: String!, confirmPassword: String!): User!
   updatePermissions(permissions: [Permission], userId: ID!): User  
+  createCategory(name: String!): Category
+  deleteCategory(id: ID!): Category
 }
 
 type Query {
@@ -26,6 +28,7 @@ type User {
   name: String!
   email: String!
   permissions: [Permission!]!
-  links: [Link]
+  links: [Link!]!
+  categories: [Category!]!
 }
 
