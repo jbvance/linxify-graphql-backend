@@ -1,5 +1,5 @@
 # source: https://linxify-dev-d62a429fa9.herokuapp.com
-# timestamp: Tue Dec 17 2019 07:54:57 GMT-0600 (Central Standard Time)
+# timestamp: Wed Dec 18 2019 18:08:49 GMT-0500 (Eastern Standard Time)
 
 type AggregateCategory {
   count: Int!
@@ -467,11 +467,11 @@ scalar DateTime
 type Link implements Node {
   id: ID!
   url: String!
-  favIcon: String!
+  favIcon: String
   title: String!
   note: String
   user: User!
-  Category: Category
+  category: Category
   createdAt: DateTime
   updatedAt: DateTime
 }
@@ -489,11 +489,11 @@ type LinkConnection {
 input LinkCreateInput {
   id: ID
   url: String!
-  favIcon: String!
+  favIcon: String
   title: String!
   note: String
   user: UserCreateOneWithoutLinksInput!
-  Category: CategoryCreateOneInput
+  category: CategoryCreateOneInput
 }
 
 input LinkCreateManyWithoutUserInput {
@@ -504,10 +504,10 @@ input LinkCreateManyWithoutUserInput {
 input LinkCreateWithoutUserInput {
   id: ID
   url: String!
-  favIcon: String!
+  favIcon: String
   title: String!
   note: String
-  Category: CategoryCreateOneInput
+  category: CategoryCreateOneInput
 }
 
 """An edge in a connection."""
@@ -539,7 +539,7 @@ enum LinkOrderByInput {
 type LinkPreviousValues {
   id: ID!
   url: String!
-  favIcon: String!
+  favIcon: String
   title: String!
   note: String
   createdAt: DateTime
@@ -846,7 +846,7 @@ input LinkUpdateInput {
   title: String
   note: String
   user: UserUpdateOneRequiredWithoutLinksInput
-  Category: CategoryUpdateOneInput
+  category: CategoryUpdateOneInput
 }
 
 input LinkUpdateManyDataInput {
@@ -885,7 +885,7 @@ input LinkUpdateWithoutUserDataInput {
   favIcon: String
   title: String
   note: String
-  Category: CategoryUpdateOneInput
+  category: CategoryUpdateOneInput
 }
 
 input LinkUpdateWithWhereUniqueWithoutUserInput {
@@ -1153,7 +1153,7 @@ input LinkWhereInput {
   """All values greater than or equal the given value."""
   updatedAt_gte: DateTime
   user: UserWhereInput
-  Category: CategoryWhereInput
+  category: CategoryWhereInput
 }
 
 input LinkWhereUniqueInput {

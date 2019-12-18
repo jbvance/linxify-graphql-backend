@@ -2,9 +2,14 @@ const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const { randomBytes } = require('crypto');
 const { promisify } = require('util');
+const urlRegex = require('url-regex');
 const { transport, makeANiceEmail } = require('../mail');
 const { hasPermission } = require('../utils');
 const stripe = require('../stripe');
+const {
+    getMeta,
+    promiseTimeout   
+} = require('../utils');
 
 const Mutations = {
   // async createItem(parent, args, ctx, info) {
@@ -53,7 +58,103 @@ const Mutations = {
   //   }
   //   return ctx.db.mutation.deleteItem({ where }, info);
   // },
- 
+  
+  async createLink(parent, args, ctx, info) {    
+    const requiredFields = ['url'];
+    const missingField = requiredFields.find(field => !(field in args)); 
+    const user = ctx.request.user;   
+    
+    // verify user exists       
+    if (!user) {
+	    throw new Error(`ValidationError: User does not exist`);        
+    }
+
+    if (missingField) {
+	    throw new Error(`ValidationError: Missing Field ${missingField}`);         
+    }  
+         
+    const url = args.url;    
+    let catToFind = null;
+
+    catToFind = args.category || 'none';
+    
+    // If url is not a valid url, send error response 
+    if (!urlRegex({
+        exact: true
+      }).test(url)) {
+      throw new Error(`ValidationError: ${url} is not formatted properly`);
+    }
+    
+    // create a variable for category and title in case we need to save it into the link below
+    let categories, category, categoryId, link, title, favIcon, note;
+    note = args.note || null;
+    
+    try {   
+        const metaData = await promiseTimeout(1500, getMeta(url));       
+        title = metaData.title || url;
+        favIcon = metaData.logo || null;      
+        // If category does not exist, create it here
+       if (args.category) {
+         categories = await ctx.db.query.categories({
+           where: {
+             OR: [
+               {id: catToFind},
+               {name_contains: catToFind}
+             ],
+             AND:[
+                {user: {
+                  id: user.id
+                }}
+            ]
+           }
+         }, '{ id }');         
+          if(categories && categories.length > 0) {
+            categoryId = categories[0].id;
+          }
+       }    
+      console.log("CATEGORY", categoryId);
+      //create new Category if one was passed via args but not found in db
+      if (args.category && !categoryId) {
+        console.log(`CREATING CATEGORY ${args.category}`);
+        category = await ctx.db.mutation.createCategory({
+          data: {
+            name: args.category,
+            user: {
+              connect: {
+                id: ctx.request.userId
+              }
+            }
+          }
+        }, '{ id }');
+        categoryId = category.id;
+        console.log('CATEGORY ADDED', categoryId);
+      }   
+      
+      return await ctx.db.mutation.createLink({
+        data: {
+          url,
+          favIcon,
+          title,
+          note,
+          category: {
+            connect: {
+              id: categoryId
+            }
+          },
+          user: {
+            connect: {
+              id: user.id
+            }
+          }
+        }
+      }, '{ id url title favIcon }')
+
+    } catch (err) {
+        console.error(err);
+       throw new Error('ERROR CREATING LINK', err);
+    }
+           
+  }, 
 
   async signup(parent, args, ctx, info) {
     args.email = args.email.toLowerCase();
@@ -171,14 +272,14 @@ const Mutations = {
     if(!userId) throw new Error('You  must be signed in to complete this order');
     return ctx.db.mutation.createCategory({
       data: {
-        name: args.name,
+        name: args.name.toLowerCase(),
         user: {
           connect: {
             id: userId
           }
         }
       }
-    })
+    }, info)
   },
 
   async deleteCategory(parent, args, ctx, info) {

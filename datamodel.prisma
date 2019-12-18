@@ -30,11 +30,11 @@ type Category {
 type Link {
   id: ID! @id
   url: String!
-  favIcon: String!
+  favIcon: String
   title: String!
   note: String
   user: User! @relation(name: "UserLinks")
-  Category: Category
+  category: Category
   createdAt: DateTime @createdAt
   updatedAt: DateTime @updatedAt
 }
