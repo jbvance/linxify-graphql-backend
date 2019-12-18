@@ -14,7 +14,7 @@ type User {
   password: String!
   resetToken: String
   resetTokenExpiry: Float  
-  links: [Link!]! @relation(name: "UserLinks")
+  links: [Link!]! @relation(name: "UserLinks", onDelete: CASCADE)
   categories: [Category!]! @relation(name: "UserCategories", onDelete: CASCADE)
   permissions: [Permission] @scalarList(strategy: RELATION)
 }
@@ -33,7 +33,7 @@ type Link {
   favIcon: String!
   title: String!
   note: String
-  user: User! @relation(name: "UserLinks", onDelete: CASCADE)
+  user: User! @relation(name: "UserLinks")
   Category: Category
   createdAt: DateTime @createdAt
   updatedAt: DateTime @updatedAt
