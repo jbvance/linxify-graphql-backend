@@ -214,9 +214,7 @@ const Mutations = {
     );
 
     if (!linkToDelete) throw new Error(`Unable to locate link with ID '${id}'`);
-    if (linkToDelete.user.id !== user.id) throw new Error('Error: You can only delete links that you created');
-
-    console.log('LINK TO DELETE', linkToDelete);
+    if (linkToDelete.user.id !== user.id) throw new Error('Error: You can only delete links that you created');   
 
     return ctx.db.mutation.deleteLink({
       where: {
