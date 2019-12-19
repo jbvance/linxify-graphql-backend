@@ -5,6 +5,7 @@ const metascraper = require('metascraper')([
 ]);
 const got = require('got');
 const Url = require('url-parse');
+const urlRegex = require('url-regex');
 
 function hasPermission(user, permissionsNeeded) {
   const matchedPermissions = user.permissions.filter(permissionTheyHave =>
@@ -41,6 +42,17 @@ async function getMeta(targetUrl) {
     }
 }
 
+function validateUrl(url) {
+  // If url is not a valid url, send error response
+  if (
+    !urlRegex({
+      exact: true
+    }).test(url)
+  ) {
+    throw new Error(`ValidationError: ${url} is not formatted properly`);
+  }
+}
+
 //Effectively limits the amount of time a promise is allowed to run
 // before rejecting. This is used for potentially long async calls
 // to prevent them from running too long. If getTitle or getLogo
@@ -65,6 +77,7 @@ promiseTimeout = function(ms, promise){
 module.exports = {
     hasPermission,
     getMeta,
-    promiseTimeout
+    promiseTimeout,
+    validateUrl
 };
 
