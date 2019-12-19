@@ -156,6 +156,34 @@ const Mutations = {
            
   }, 
 
+  updateLink(parent, args, ctx, info) {
+    const user = ctx.request.user;
+    if (!user) throw new Error('You must be logged in');
+    // first take a copy of the updated link
+    const updates = { ...args };
+    // remove ID from updates because you can't update it
+    delete updates.id;
+    // remove category because it has to be connected manually
+    delete updates.category;
+
+    // TODO: VALIDATE URL and get new logo in case website domain has changed
+   
+    return ctx.db.mutation.updateLink(
+      {
+        data: {
+          ...updates, 
+          category: {
+            connect: {
+              id: args.category
+            }
+          }
+        },
+        where: { id: args.id }
+      },
+      info
+    );
+  },
+
   async signup(parent, args, ctx, info) {
     args.email = args.email.toLowerCase();
     // hash the password
