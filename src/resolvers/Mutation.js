@@ -86,54 +86,53 @@ const Mutations = {
     note = args.note || null;
 
     try {
-      const metaData = await promiseTimeout(1500, getMeta(url));
-      title = metaData.title || url;
-      favIcon = metaData.logo || null;
-      // If category does not exist, create it here
-      if (args.category) {
-        categories = await ctx.db.query.categories(
-          {
-            where: {
-              OR: [{ id: catToFind }, { name_contains: catToFind }],
-              AND: [
-                {
+          const metaData = await promiseTimeout(1500, getMeta(url));
+          title = metaData.title || url;
+          favIcon = metaData.logo || null;
+          // If category does not exist, create it here
+          if (args.category) {
+            categories = await ctx.db.query.categories(
+              {
+                where: {
+                  OR: [{ id: catToFind }, { name_contains: catToFind }],
+                  AND: [
+                    {
+                      user: {
+                        id: user.id
+                      }
+                    }
+                  ]
+                }
+              },
+              '{ id }'
+            );
+            if (categories && categories.length > 0) {
+              categoryId = categories[0].id;
+            }
+          }
+          console.log('CATEGORY', categoryId);
+          //create new Category if one was passed via args but not found in db
+          if (args.category && !categoryId) {
+            console.log(`CREATING CATEGORY ${args.category}`);
+            category = await ctx.db.mutation.createCategory(
+              {
+                data: {
+                  name: args.category,
                   user: {
-                    id: user.id
+                    connect: {
+                      id: ctx.request.userId
+                    }
                   }
                 }
-              ]
-            }
-          },
-          '{ id }'
-        );
-        if (categories && categories.length > 0) {
-          categoryId = categories[0].id;
-        }
-      }
-      console.log('CATEGORY', categoryId);
-      //create new Category if one was passed via args but not found in db
-      if (args.category && !categoryId) {
-        console.log(`CREATING CATEGORY ${args.category}`);
-        category = await ctx.db.mutation.createCategory(
-          {
-            data: {
-              name: args.category,
-              user: {
-                connect: {
-                  id: ctx.request.userId
-                }
-              }
-            }
-          },
-          '{ id }'
-        );
-        categoryId = category.id;
-        console.log('CATEGORY ADDED', categoryId);
-      }
+              },
+              '{ id }'
+            );
+            categoryId = category.id;
+            console.log('CATEGORY ADDED', categoryId);
+          }
 
-      return await ctx.db.mutation.createLink(
-        {
-          data: {
+          //create data object and remove category if none was passed in
+          const data = {
             url,
             favIcon,
             title,
@@ -148,11 +147,19 @@ const Mutations = {
                 id: user.id
               }
             }
+          };
+
+          if(!categoryId) {
+            delete data.category;
           }
-        },
-        '{ id url title favIcon }'
-      );
-    } catch (err) {
+
+          return await ctx.db.mutation.createLink(
+            {
+              data
+            },
+            '{ id url title favIcon }'
+          );
+        } catch (err) {
       console.error(err);
       throw new Error('ERROR CREATING LINK', err);
     }

@@ -26,6 +26,7 @@ type Query {
  users: [User]!
  categories: [Category!]!
  userCategories: [Category!]!
+ userLinks: [Link!]!
 }
 
 type User {

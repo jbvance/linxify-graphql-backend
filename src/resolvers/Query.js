@@ -44,7 +44,19 @@ const Query = {
       }
     };
     return ctx.db.query.categories({ where }, info);
+  },
+
+  async userLinks(parent, args, ctx, info) {
+    if (!ctx.request.userId) throw new Error('You must be logged in');
+    const where = {
+      user: {
+        id: ctx.request.userId
+      }
+    };
+    return ctx.db.query.links({ where }, info);
   }
 };
+
+
 
 module.exports = Query;
