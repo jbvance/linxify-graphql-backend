@@ -242,8 +242,21 @@ const Mutations = {
           permissions: { set: ['USER'] }
         }
       },
-      info
+      '{ id name email }'
     );
+    // create a default "none" category for user for if they don't want to select a category 
+    // when adding links
+    console.log("USER AFTER SIGNUP", user);
+    const category = await ctx.db.mutation.createCategory({
+      data: {
+        name:"none",
+        user:{
+         connect:{
+            id: user.id
+          }
+        }
+      }
+    }, '{ id name }');
     //create jwt for user
     const token = jwt.sign({ userId: user.id }, process.env.APP_SECRET);
     //set jwt as cookie on response
