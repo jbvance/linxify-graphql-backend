@@ -384,40 +384,7 @@ const Mutations = {
       throw new Error('You can only delete items that belong to you');
     }
     return ctx.db.mutation.deleteCategory({ where }, info);
-  }
-
-  // async createOrder(parent, args, ctx, info) {
-  //   const { userId } = ctx.request;
-  //   if(!userId) throw new Error('You  must be signed in to complete this order');
-  //   const user = await ctx.db.query.user({
-  //     where: {
-  //       id: userId
-  //     }
-  //   }, `{ id
-  //         name
-  //         email
-  //         cart {
-  //             id
-  //             quantity
-  //             item { title price id description image }
-  //         }
-  //       }`)
-
-  //   //recalcuate total price (in case user tried to change it on the client)
-  //   const amount = user.cart.reduce((tally, cartItem) =>  {
-  //     return tally + cartItem.item.price * cartItem.quantity;
-  //   }, 0);
-
-  //   //Create the Stripe Charge (turn token into money)
-  //   const charge = await stripe.charges.create({
-  //     amount,
-  //     currency: 'USD',
-  //     source: args.token
-  //   });
-
-  //   //console.log(`Going to charge for a total of ${amount}`);
-
-  // }
+  }  
 };
 
 module.exports = Mutations;

@@ -15,7 +15,7 @@ type Mutation {
   deleteCategory(id: ID!): Category
   createLink(url: String!, title: String, favIcon: String, note: String, category: String): Link
   updateLink(id: ID! url: String!, title: String, favIcon: String, note: String, category: String): Link
-  deleteLink(id: ID!): Link
+  deleteLink(id: ID!): Link 
 }
 
 type Query {
@@ -27,6 +27,7 @@ type Query {
  categories: [Category!]!
  userCategories: [Category!]!
  userLinks: [Link!]!
+  userLink(id: ID!): Link!
 }
 
 type User {
