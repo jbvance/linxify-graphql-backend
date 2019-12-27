@@ -5,11 +5,7 @@ const { promisify } = require('util');
 const { transport, makeANiceEmail } = require('../mail');
 const { hasPermission } = require('../utils');
 const stripe = require('../stripe');
-const {
-    getMeta,
-    promiseTimeout,
-    validateUrl
-} = require('../utils');
+const { getMeta, promiseTimeout, validateUrl } = require('../utils');
 
 const Mutations = {
   // async createItem(parent, args, ctx, info) {
@@ -86,80 +82,79 @@ const Mutations = {
     note = args.note || null;
 
     try {
-          const metaData = await promiseTimeout(1500, getMeta(url));
-          title = metaData.title || url;
-          favIcon = metaData.logo || null;
-          // If category does not exist, create it here
-          if (args.category) {
-            categories = await ctx.db.query.categories(
-              {
-                where: {
-                  OR: [{ id: catToFind }, { name_contains: catToFind }],
-                  AND: [
-                    {
-                      user: {
-                        id: user.id
-                      }
-                    }
-                  ]
-                }
-              },
-              '{ id }'
-            );
-            if (categories && categories.length > 0) {
-              categoryId = categories[0].id;
-            }
-          }
-          console.log('CATEGORY', categoryId);
-          //create new Category if one was passed via args but not found in db
-          if (args.category && !categoryId) {
-            console.log(`CREATING CATEGORY ${args.category}`);
-            category = await ctx.db.mutation.createCategory(
-              {
-                data: {
-                  name: args.category,
+      const metaData = await promiseTimeout(1500, getMeta(url));
+      title = metaData.title || url;
+      favIcon = metaData.logo || null;
+      // If category does not exist, create it here
+      if (args.category) {
+        categories = await ctx.db.query.categories(
+          {
+            where: {
+              OR: [{ id: catToFind }, { name_contains: catToFind }],
+              AND: [
+                {
                   user: {
-                    connect: {
-                      id: ctx.request.userId
-                    }
+                    id: user.id
                   }
                 }
-              },
-              '{ id }'
-            );
-            categoryId = category.id;
-            console.log('CATEGORY ADDED', categoryId);
-          }
-
-          //create data object and remove category if none was passed in
-          const data = {
-            url,
-            favIcon,
-            title,
-            note,
-            category: {
-              connect: {
-                id: categoryId
-              }
-            },
-            user: {
-              connect: {
-                id: user.id
+              ]
+            }
+          },
+          '{ id }'
+        );
+        if (categories && categories.length > 0) {
+          categoryId = categories[0].id;
+        }
+      }      
+      //create new Category if one was passed via args but not found in db
+      if (args.category && !categoryId) {
+        console.log(`CREATING CATEGORY ${args.category}`);
+        category = await ctx.db.mutation.createCategory(
+          {
+            data: {
+              name: args.category,
+              user: {
+                connect: {
+                  id: ctx.request.userId
+                }
               }
             }
-          };
+          },
+          '{ id }'
+        );
+        categoryId = category.id;
+        //console.log('CATEGORY ADDED', categoryId);
+      }
 
-          if(!categoryId) {
-            delete data.category;
+      //create data object and remove category if none was passed in
+      const data = {
+        url,
+        favIcon,
+        title,
+        note,
+        category: {
+          connect: {
+            id: categoryId
           }
+        },
+        user: {
+          connect: {
+            id: user.id
+          }
+        }
+      };
 
-          return await ctx.db.mutation.createLink(
-            {
-              data
-            },
-            '{ id url title favIcon }'
-          );
-        } catch (err) {
+      if (!categoryId) {
+        delete data.category;
+      }
+
+      return await ctx.db.mutation.createLink(
+        {
+          data
+        },
+        '{ id url title favIcon }'
+      );
+    } catch (err) {
       console.error(err);
       throw new Error('ERROR CREATING LINK', err);
     }
@@ -221,7 +216,8 @@ const Mutations = {
     );
 
     if (!linkToDelete) throw new Error(`Unable to locate link with ID '${id}'`);
-    if (linkToDelete.user.id !== user.id) throw new Error('Error: You can only delete links that you created');   
+    if (linkToDelete.user.id !== user.id)
+      throw new Error('Error: You can only delete links that you created');
 
     return ctx.db.mutation.deleteLink({
       where: {
@@ -244,19 +240,21 @@ const Mutations = {
       },
       '{ id name email }'
     );
-    // create a default "none" category for user for if they don't want to select a category 
-    // when adding links
-    console.log("USER AFTER SIGNUP", user);
-    const category = await ctx.db.mutation.createCategory({
-      data: {
-        name:"none",
-        user:{
-         connect:{
-            id: user.id
+    // create a default "none" category for user for if they don't want to select a category
+    // when adding links   
+    const category = await ctx.db.mutation.createCategory(
+      {
+        data: {
+          name: 'none',
+          user: {
+            connect: {
+              id: user.id
+            }
           }
         }
-      }
-    }, '{ id name }');
+      },
+      '{ id name }'
+    );
     //create jwt for user
     const token = jwt.sign({ userId: user.id }, process.env.APP_SECRET);
     //set jwt as cookie on response
@@ -356,8 +354,7 @@ const Mutations = {
 
   async createCategory(parent, args, ctx, info) {
     const { userId } = ctx.request;
-    if (!userId)
-      throw new Error('You  must be signed in to complete this order');
+    if (!userId) throw new Error('You  must be signed in to add a category');
     return ctx.db.mutation.createCategory(
       {
         data: {
@@ -374,6 +371,8 @@ const Mutations = {
   },
 
   async deleteCategory(parent, args, ctx, info) {
+    const { userId } = ctx.request;
+    if (!userId) throw new Error('You  must be signed in to delete a category');
     const where = { id: args.id };
     // Do not allow delete if category has links associated with it
     const links = await ctx.db.query.links({
@@ -383,8 +382,10 @@ const Mutations = {
         }
       }
     });
-    if(links && links.length > 0) {
-      throw new Error('Unable to delete category. There are links associated with this category. Please delete the links or change their categories first');
+    if (links && links.length > 0) {
+      throw new Error(
+        'Unable to delete category. There are links associated with this category. Please delete the links or change their categories first'
+      );
     }
     const category = await ctx.db.query.category(
       { where },
@@ -395,7 +396,30 @@ const Mutations = {
       throw new Error('You can only delete items that belong to you');
     }
     return ctx.db.mutation.deleteCategory({ where }, info);
-  }  
+  },
+
+  async updateCategory(parent, args, ctx, info) {
+    const { userId } = ctx.request;
+    if (!userId) throw new Error('You  must be signed in to add a category');
+    const category = await ctx.db.query.category(
+      {
+        where: {
+          id: args.id
+        }
+      },
+      '{ id }'
+    );
+    if (!category || !category.id)
+      throw new Error(`Unable to locate category with id ${args.id}`);
+    return ctx.db.mutation.updateCategory({
+      data: {
+        name: args.name
+      },
+      where: {
+        id: args.id
+      }
+    });
+  }
 };
 
 module.exports = Mutations;
