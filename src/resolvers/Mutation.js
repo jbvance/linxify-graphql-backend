@@ -375,6 +375,17 @@ const Mutations = {
 
   async deleteCategory(parent, args, ctx, info) {
     const where = { id: args.id };
+    // Do not allow delete if category has links associated with it
+    const links = await ctx.db.query.links({
+      where: {
+        category: {
+          id: args.id
+        }
+      }
+    });
+    if(links && links.length > 0) {
+      throw new Error('Unable to delete category. There are links associated with this category. Please delete the links or change their categories first');
+    }
     const category = await ctx.db.query.category(
       { where },
       `{ id name user { id } }`

@@ -35,7 +35,7 @@ const Query = {
     return ctx.db.query.users({}, info);
   },
 
-  async userCategories(parent, args, ctx, info) {
+  async userCategories(parent, args, ctx, info) {   
     if (!ctx.request.userId) throw new Error('You must be logged in');
     const where = {
       user: {
@@ -64,7 +64,7 @@ const Query = {
     return links[0];
   },
 
-  async userLinks(parent, args, ctx, info) {
+  async userLinks(parent, args, ctx, info) {    
     if (!ctx.request.userId) throw new Error('You must be logged in');
     const where = {
       user: {
