@@ -13,7 +13,7 @@ type Mutation {
   updatePermissions(permissions: [Permission], userId: ID!): User  
   createCategory(name: String!): Category
   deleteCategory(id: ID!): Category
-  updateCategory(id: ID!, name: String!): Category
+  updateCategory(id: ID!, name: String!): Category  
   createLink(url: String!, title: String, favIcon: String, note: String, category: String): Link
   updateLink(id: ID! url: String!, title: String, favIcon: String, note: String, category: String): Link
   deleteLink(id: ID!): Link 
@@ -27,8 +27,9 @@ type Query {
  users: [User]!
  categories: [Category!]!
  userCategories: [Category!]!
+ userCategory(id: ID!): Category
  userLinks: [Link!]!
-  userLink(id: ID!): Link!
+ userLink(id: ID!): Link!
 }
 
 type User {

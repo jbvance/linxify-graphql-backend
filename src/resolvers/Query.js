@@ -45,6 +45,15 @@ const Query = {
     return ctx.db.query.categories({ where }, info);
   },
 
+  async userCategory(parent, args, ctx, info) {
+    if (!ctx.request.userId) throw new Error('You must be logged in');
+      const where = {
+      id: args.id
+    }
+    return ctx.db.query.category({ where }, info);
+  },
+
+
   async userLink(parent, args, ctx, info) {
     if (!ctx.request.userId) throw new Error('You must be logged in');
     const where = {
