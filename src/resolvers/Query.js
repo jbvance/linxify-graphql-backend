@@ -81,7 +81,23 @@ const Query = {
       }
     };
     return ctx.db.query.links({ where }, info);
+  },
+
+  async userCategoryLinks(parent, args, ctx, info) {    
+    if (!ctx.request.userId) throw new Error('You must be logged in');
+    const where = {
+      AND: [
+        {user: {
+          id: ctx.request.userId
+        }},
+        {category: {
+          id: args.categoryId
+        }}
+      ]
+    };
+    return ctx.db.query.links({ where }, info);
   }
+
 };
 
 module.exports = Query;

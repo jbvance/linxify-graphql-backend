@@ -30,6 +30,7 @@ type Query {
  userCategory(id: ID!): Category
  userLinks: [Link!]!
  userLink(id: ID!): Link!
+ userCategoryLinks(categoryId: ID!): [Link!]!
 }
 
 type User {
