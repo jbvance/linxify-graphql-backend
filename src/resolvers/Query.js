@@ -87,7 +87,7 @@ const Query = {
         id: ctx.request.userId
       }
     };
-    return ctx.db.query.links({ where, first: args.first, skip: args.skip }, info);
+    return ctx.db.query.links({ where, first: args.first, skip: args.skip, orderBy: 'createdAt_DESC' }, info);
   },
 
   async userCategoryLinks(parent, args, ctx, info) {    
