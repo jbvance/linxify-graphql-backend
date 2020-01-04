@@ -28,9 +28,10 @@ type Query {
  categories: [Category!]!
  userCategories: [Category!]!
  userCategory(id: ID!): Category
- userLinks: [Link!]!
+ userLinks(skip: Int, first: Int): [Link!]!
  userLink(id: ID!): Link!
  userCategoryLinks(categoryId: ID!): [Link!]!
+ linksConnection(where: LinkWhereInput): LinkConnection!
 }
 
 type User {

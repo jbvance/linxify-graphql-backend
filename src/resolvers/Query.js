@@ -11,7 +11,14 @@ const Query = {
   //    }
   //item: forwardTo('db'),
 
-  //itemsConnection: forwardTo('db'),
+  linksConnection(parent, args, ctx, info) {
+    const where = {
+      user: {
+        id: ctx.request.userId
+      }
+    }
+    return ctx.db.query.linksConnection({ where }, info);
+  },
 
   categories: forwardTo('db'),
 
@@ -73,14 +80,14 @@ const Query = {
     return links[0];
   },
 
-  async userLinks(parent, args, ctx, info) {    
+  async userLinks(parent, args, ctx, info) {       
     if (!ctx.request.userId) throw new Error('You must be logged in');
     const where = {
       user: {
         id: ctx.request.userId
       }
     };
-    return ctx.db.query.links({ where }, info);
+    return ctx.db.query.links({ where, first: args.first, skip: args.skip }, info);
   },
 
   async userCategoryLinks(parent, args, ctx, info) {    
