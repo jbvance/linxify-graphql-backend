@@ -260,6 +260,8 @@ const Mutations = {
     //set jwt as cookie on response
     ctx.response.cookie('token', token, {
       httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: !process.env.NODE_ENV === 'production',
       maxAge: 1000 * 60 * 60 * 24 * 365
     }); // 1 year cookieParser
     //return user to browser
@@ -276,8 +278,8 @@ const Mutations = {
     const token = jwt.sign({ userId: user.id }, process.env.APP_SECRET);
     ctx.response.cookie('token', token, {
       httpOnly: true,
-      secure: true,
-      sameSite: false,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: !process.env.NODE_ENV === 'production',
       maxAge: 1000 * 60 * 60 * 24 * 365,
     });
     return user;
@@ -324,6 +326,8 @@ const Mutations = {
     const token = jwt.sign({ userId: updatedUser.id }, process.env.APP_SECRET);
     ctx.response.cookie('token', token, {
       httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: !process.env.NODE_ENV === 'production',
       maxAge: 1000 * 60 * 60 * 24 * 365
     });
     return updatedUser;
