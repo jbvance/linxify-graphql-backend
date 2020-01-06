@@ -23,9 +23,10 @@ const Query = {
   categories: forwardTo('db'),
 
   me(parent, args, ctx, info) {
+
     if (!ctx.request.userId) {
       return null;
-    }
+    }    
     return ctx.db.query.user(
       {
         where: {

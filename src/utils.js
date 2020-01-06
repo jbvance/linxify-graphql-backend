@@ -38,7 +38,7 @@ async function getMeta(targetUrl) {
         console.error(`ERROR GETTING METADATA FROM ${targetUrl}`, err);
         //Don't throw an error. The info may not be able to be scraped, so
         // just return null if it doesn't work
-        return Promise.resolve(null);
+        return Promise.resolve({});
     }
 }
 
