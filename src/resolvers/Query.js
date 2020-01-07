@@ -90,6 +90,27 @@ const Query = {
     };
     return ctx.db.query.links({ where, first: args.first, skip: args.skip, orderBy: 'createdAt_DESC' }, info);
   },
+  
+  async searchUserLinks(parent, args, ctx, info) {
+     if (!ctx.request.userId) throw new Error('You must be logged in');
+     const searchString = args.searchString;
+     const where = {
+     OR:[
+      	{title_contains:""},
+        {url_contains:""},
+        {note_contains:""},
+        { category:{
+          name_contains:""
+        }}
+    ],
+     AND:[
+        {user: {
+          id: ctx.request.userId
+        }}      
+      ]
+    };
+    return ctx.db.query.links({ where }, info);
+  },
 
   async userCategoryLinks(parent, args, ctx, info) {    
     if (!ctx.request.userId) throw new Error('You must be logged in');

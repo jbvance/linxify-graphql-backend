@@ -30,8 +30,10 @@ type Query {
  userCategory(id: ID!): Category
  userLinks(skip: Int, first: Int): [Link!]!
  userLink(id: ID!): Link!
+ searchUserLinks(searchString: String): Link!
  userCategoryLinks(categoryId: ID!): [Link!]!
  linksConnection(where: LinkWhereInput): LinkConnection!
+
 }
 
 type User {
