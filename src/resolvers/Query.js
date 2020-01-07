@@ -96,11 +96,11 @@ const Query = {
      const searchString = args.searchString;
      const where = {
      OR:[
-      	{title_contains:""},
-        {url_contains:""},
-        {note_contains:""},
+      	{title_contains: searchString},
+        {url_contains: searchString},
+        {note_contains: searchString},
         { category:{
-          name_contains:""
+          name_contains: searchString
         }}
     ],
      AND:[
