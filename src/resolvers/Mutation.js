@@ -175,7 +175,7 @@ const Mutations = {
 
     try {
       const metaData = await promiseTimeout(1500, getMeta(args.url));
-      title = metaData.title || args.url;
+      title = metaData.title || args.title || args.url;
       favIcon = metaData.logo || null;
 
       // TODO: use default logo if none is returned
