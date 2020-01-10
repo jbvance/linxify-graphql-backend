@@ -276,6 +276,7 @@ const Mutations = {
     const valid = await bcrypt.compare(password, user.password);
     if (!valid) throw new Error('Invalid Password');
     const token = jwt.sign({ userId: user.id }, process.env.APP_SECRET);
+    console.log('TOKEN', token);
     ctx.response.cookie('token', token, {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',
@@ -283,6 +284,7 @@ const Mutations = {
       //sameSite: "None", - Only valid in Express 4.17+, but graphql-yoga currently uses 4.16.x
       maxAge: 1000 * 60 * 60 * 24 * 365,
     });
+    console.log('COOKIE SET');
     return user;
   },
   signout(parent, args, ctx, info) {
