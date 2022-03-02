@@ -28,7 +28,7 @@
     "prisma": "1.33.0",
     "prisma-binding": "2.1.6",
     "stripe": "^6.12.1",
-    "url-parse": "^1.4.4",
+    "url-parse": "^1.5.9",
     "url-regex": "^5.0.0"
   },
   "license": "MIT",
