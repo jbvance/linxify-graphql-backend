@@ -17,7 +17,7 @@
     "graphql": "^0.13.2",
     "graphql-cli": "^2.16.7",
     "graphql-yoga": "1.16.2",
-    "jsonwebtoken": "8.3.0",
+    "jsonwebtoken": "9.0.0",
     "metascraper": "^5.8.12",
     "metascraper-clearbit": "^5.8.12",
     "metascraper-logo": "^5.8.12",
